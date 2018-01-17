@@ -195,7 +195,7 @@ return [
 'port' => 465,
 'timeout' => 30,
 'username' => 'humbertomoran5@gmail.com',
-'password' => 'akagami12',
+'password' => '',
 'client' => null,
 'context' => [
 'ssl' => [
