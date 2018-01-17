@@ -65,22 +65,22 @@ class RegistrosTable extends Table
         $validator
             ->numeric('nota1')
             ->requirePresence('nota1', 'create')
-            ->notEmpty('nota1');
+            ->notEmpty('nota1','rellene este campo con una nota valida');
 
         $validator
             ->numeric('nota2')
             ->requirePresence('nota2', 'create')
-            ->notEmpty('nota2');
+            ->notEmpty('nota2','rellene este campo con una nota valida');
 
         $validator
             ->numeric('nota3')
             ->requirePresence('nota3', 'create')
-            ->notEmpty('nota3');
+            ->notEmpty('nota3','rellene este campo con una nota valida');
 
         $validator
             ->numeric('promedio')
             ->requirePresence('promedio', 'create')
-            ->notEmpty('promedio');
+            ->notEmpty('promedio','rellene este campo');
 
         return $validator;
     }

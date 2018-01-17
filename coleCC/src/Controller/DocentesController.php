@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use Cake\Event\Event;
 /**
  * Docentes Controller
  *
@@ -11,25 +11,41 @@ use App\Controller\AppController;
  */
 class DocentesController extends AppController
 {
-
+  public $helpers = array('Html','Form');
+  
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
+ public $paginate = [
+        'limit' => 10,
+    'order' => ['id' => 'DESC']
+    ];
     public function index()
     {
-        $docentes = $this->paginate($this->Docentes);
 
-        $this->set(compact('docentes'));
-        $this->set('_serialize', ['docentes']);
+          $docentes = $this->paginate($this->Docentes);
+
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-doc'])
+            {
+
+        $busdoc = $this->Docentes->find()->where(['nombre LIKE'=>'%'. $this->request->data['buscar-doc'].'%']);
+
+            $docentes = $this->paginate($busdoc);
+        }
+}
+        
+        $this->set('docentes', $docentes); 
     }
 
   
     public function view($id = null)
     {
         $docente = $this->Docentes->get($id, [
-            'contain' => []
+            'contain' => ['Materias']
         ]);
 
         $this->set('docente', $docente);
@@ -41,20 +57,22 @@ class DocentesController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
+  
+    
     public function add()
     {
-        $docente = $this->Docentes->newEntity();
+         $docente = $this->Docentes->newEntity();
         if ($this->request->is('post')) {
             $docente = $this->Docentes->patchEntity($docente, $this->request->getData());
             if ($this->Docentes->save($docente)) {
                 $this->Flash->success(__('El docente a sido registrado de forma correcta'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('El docente no fue registrado, trate de nuevo'));
+              
         }
-        $this->set(compact('docente'));
-        $this->set('_serialize', ['docente']);
+          
+      $this->set(compact('docente'));
     }
 
     
@@ -95,4 +113,12 @@ class DocentesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
+
+     
+    
+ 
+    
+
 }

@@ -69,7 +69,7 @@ class MateriasTable extends Table
 
         $validator
             ->requirePresence('nombre', 'create')
-            ->notEmpty('nombre');
+            ->notEmpty('nombre','rellene este campo');
 
         return $validator;
     }

@@ -19,11 +19,24 @@ public $helpers = array('Html','Form');
      */
     public function index()
     {
-        $this->paginate = [
+       $this->paginate = [
             'contain' => ['Alumnos','Materias']
         ];
         $registros = $this->paginate($this->Registros);
-        $this->set('registros', $registros);
+
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-reg'])
+            {
+
+        $busreg = $this->Registros->find()->where(['Alumnos.nombres LIKE'=>'%'. $this->request->data['buscar-reg'].'%']);
+
+            $registros = $this->paginate($busreg);
+        }
+}
+        
+       $this->set('registros', $registros);
+        
     }
 
   
@@ -42,7 +55,7 @@ public $helpers = array('Html','Form');
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($id = null)
     {
         $registro = $this->Registros->newEntity();
         if ($this->request->is('post')) {
@@ -50,13 +63,15 @@ public $helpers = array('Html','Form');
             if ($this->Registros->save($registro)) {
                 $this->Flash->success(__('El registro a sido guardado'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'Alumnos','action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar el registro, intentelo de nuevo'));
         }
-        //$this->set(compact('registro'));
+        $this->set(compact('registro'));
         //$this->set('_serialize', ['registro']);
-        $alumnos = $this->Registros->Alumnos->find('list');
+        $alumnos = $this->Registros->Alumnos->find('list',[
+             'conditions' => ['Alumnos.id =' => $id]
+            ]);
         $this->set(compact('alumnos'));
         
         $materias = $this->Registros->Materias->find('list');
@@ -67,19 +82,26 @@ public $helpers = array('Html','Form');
     public function edit($id = null)
     {
         $registro = $this->Registros->get($id, [
-            'contain' => []
+            'contain' => ['Materias','Alumnos']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $registro = $this->Registros->patchEntity($registro, $this->request->getData());
             if ($this->Registros->save($registro)) {
-                $this->Flash->success(__('El registro a sido guardado'));
+                $this->Flash->success(__('El registro fue editado'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['controller' => 'Alumnos','action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar el registro, intentelo de nuevo'));
         }
         $this->set(compact('registro'));
         $this->set('_serialize', ['registro']);
+
+        $alumnos = $this->Registros->Alumnos->find('list');
+        $this->set(compact('alumnos'));
+        
+        $materias = $this->Registros->Materias->find('list');
+        $this->set(compact('materias'));
+    
     }
 
     /**
@@ -100,5 +122,23 @@ public $helpers = array('Html','Form');
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function year()
+    {
+        if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-year'])
+            {
+                 $registros = $this->Registros->find()->where(['year =' =>  $this->request->data['buscar-year']])->contain('Materias')->contain('Alumnos');
+
+        }
+        else {
+             $this->Flash->error(__('Error'));
+             return $this->redirect(['action' => 'index']);
+        }
+}
+      
+       $this->set(compact('registros'));   
     }
 }

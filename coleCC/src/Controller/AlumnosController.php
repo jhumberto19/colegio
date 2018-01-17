@@ -17,10 +17,42 @@ class AlumnosController extends AppController
      *
      * @return \Cake\Http\Response|void
      */
+    public function isAuthorized($user)
+    {
+        if(isset($user['role']) and $user['role'] === 'student')
+        {
+            if(in_array($this->request->action, ['veralum']))
+            {
+                return true;
+            }
+            return false;
+           
+        }
+        return parent::isAuthorized($user);
+    }
+
+ public $paginate = [
+        'limit' => 8,
+    'order' => ['id' => 'DESC']
+    ];
+
     public function index()
     {
+        
         $alumnos = $this->paginate($this->Alumnos);
-        $this->set('alumnos', $alumnos);
+
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-nom'])
+            {
+
+        $dados = $this->Alumnos->find()->where(['nombres LIKE'=>'%'. $this->request->data['buscar-nom'].'%']);
+
+            $alumnos = $this->paginate($dados);
+        }
+}
+             $this->set('alumnos', $alumnos);
+       
     }     
 
     /**
@@ -32,13 +64,30 @@ class AlumnosController extends AppController
      */
     public function view($id = null)
     {
-        $alumno = $this->Alumnos->get($id, [
-            'contain' => []
-        ]);
+     
+         $query = $this->Alumnos->Registros->find('all',[
+           'conditions' => ['Registros.alumno_id' => $id]])->contain(['Materias','Alumnos']);       
 
-        $this->set('alumno', $alumno);
-        $this->set('_serialize', ['alumno']);
+                $this->set(compact('query')); 
+
+
     }
+
+     public function veralum($id = null)
+    {
+     
+      if(!$id){
+              return $this->redirect( ['controller' => 'Users', 'action' => 'home']);
+        }
+        
+        
+         $query = $this->Alumnos->find('all',[
+           'conditions' => ['Alumnos.user_id' => $id]]);   
+            
+                 $this->set(compact('query'));
+       
+    }
+
 
     /**
      * Add method
@@ -57,10 +106,15 @@ class AlumnosController extends AppController
             }
             $this->Flash->error(__('El alumno no fue registrado trate de nuevo'));
         }
+        $this->set(compact('alumno'));
         $materias = $this->Alumnos->Materias->find('list');
         $this->set(compact('materias'));
 
-        $users = $this->Alumnos->Users->find('list');
+        $users = $this->Alumnos->Users->find('list',[
+           'conditions' => ['Users.role LIKE' => '%student%'],
+            'order' => ['Users.created' => 'DESC'],
+            'limit' => 1]);
+
         $this->set(compact('users'));
     }
 
@@ -74,7 +128,7 @@ class AlumnosController extends AppController
     public function edit($id = null)
     {
         $alumno = $this->Alumnos->get($id, [
-            'contain' => []
+            'contain' => ['Users','Materias']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $alumno = $this->Alumnos->patchEntity($alumno, $this->request->getData());
@@ -87,8 +141,14 @@ class AlumnosController extends AppController
         }
         $this->set(compact('alumno'));
         $this->set('_serialize', ['alumno']);
-    }
 
+        $users = $this->Alumnos->Users->find('list');
+        $this->set(compact('users'));
+
+
+         $materias = $this->Alumnos->Materias->find('list');
+        $this->set(compact('materias'));
+}
     /**
      * Delete method
      *
@@ -108,4 +168,51 @@ class AlumnosController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    
+     public function porgrado()
+    {
+
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['grado'][0][1])
+            {
+
+        $alumnos = $this->Alumnos->find()->where(['grado LIKE'=>'%'. $this->request->data['grado'][0].'%']) ->andWhere(['seccion LIKE'=>'%'. $this->request->data['grado'][1].'%']);
+
+        }
+        else {
+             $this->Flash->error(__('Error'));
+             return $this->redirect(['action' => 'index']);
+        }
+}
+       $this->set(compact('alumnos'));        
+       
+    }
+
+
+      public function porestado()
+    {
+         
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-est'][0])
+            {
+                 $alumnos = $this->Alumnos->find()->where(['estado =' =>  $this->request->data['buscar-est'][0]]);
+
+        }
+        else {
+             $this->Flash->error(__('Error'));
+             return $this->redirect(['action' => 'index']);
+        }
+}
+      
+       $this->set(compact('alumnos'));       
+       
+    }
+
+    
+
+       
+  
 }

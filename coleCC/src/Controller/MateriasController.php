@@ -16,12 +16,29 @@ class MateriasController extends AppController
      *
      * @return \Cake\Http\Response|void
      */
+     public $paginate = [
+        'limit' => 10,
+    'order' => ['id' => 'DESC']
+    ];
     public function index()
-    {   $this->paginate = [
+    {    
+$this->paginate = [
             'contain' => ['Docentes']
         ];
         $materias = $this->paginate($this->Materias);
-        $this->set('materias', $materias);
+
+       if ( $this->request->is('post')) {
+
+            if(  $this->request->data['buscar-mat'])
+            {
+
+        $busmat = $this->Materias->find()->where(['Materias.nombre LIKE'=>'%'. $this->request->data['buscar-mat'].'%']);
+
+            $materias = $this->paginate($busmat);
+        }
+}
+        
+        $this->set('materias', $materias); 
     }
 
    
@@ -51,7 +68,9 @@ class MateriasController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('No se pudo registrar la materia, intentelo de nuevo'));
+            
         }
+        $this->set(compact('materia'));
         $docentes = $this->Materias->Docentes->find('list');
         $this->set(compact('docentes'));
     }
@@ -60,7 +79,7 @@ class MateriasController extends AppController
     public function edit($id = null)
     {
         $materia = $this->Materias->get($id, [
-            'contain' => []
+            'contain' => ['Docentes']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $materia = $this->Materias->patchEntity($materia, $this->request->getData());
@@ -73,7 +92,11 @@ class MateriasController extends AppController
         }
         $this->set(compact('materia'));
         $this->set('_serialize', ['materia']);
+
+        $docentes = $this->Materias->Docentes->find('list');
+        $this->set(compact('docentes'));
     }
+    
 
     /**
      * Delete method

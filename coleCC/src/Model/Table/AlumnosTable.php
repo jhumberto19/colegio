@@ -49,7 +49,7 @@ class AlumnosTable extends Table
         $this->hasMany('Registros', [
             'foreignKey' => 'alumno_id'
         ]);
-        $this->belongsToMany('Materias', [
+        $this->BelongsToMany('Materias', [
             'foreignKey' => 'alumno_id',
             'targetForeignKey' => 'materia_id',
             'joinTable' => 'alumnos_materias'
@@ -70,19 +70,19 @@ class AlumnosTable extends Table
 
         $validator
             ->requirePresence('nombres', 'create')
-            ->notEmpty('nombres');
+            ->notEmpty('nombres','rellene este campo');
 
         $validator
             ->requirePresence('apellidos', 'create')
-            ->notEmpty('apellidos');
+            ->notEmpty('apellidos', 'rellene este campo');
 
         $validator
             ->requirePresence('grado', 'create')
-            ->notEmpty('grado');
+            ->notEmpty('grado','rellene este campo');
 
         $validator
             ->requirePresence('seccion', 'create')
-            ->notEmpty('seccion');
+            ->notEmpty('seccion', 'rellene este campo');
 
         return $validator;
     }

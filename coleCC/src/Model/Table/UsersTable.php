@@ -56,13 +56,23 @@ class UsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('username');
+            ->notEmpty('username','rellene este campo');
 
         $validator
-            ->allowEmpty('password');
+            ->notEmpty('password','rellene este campo');
 
         $validator
-            ->allowEmpty('role');
+            ->requirePresence('role', 'create')
+            ->notEmpty('role');
+
+        $validator
+            ->email('email')
+            ->requirePresence('email', 'create')
+            ->notEmpty('email','rellene este campo');
+        $validator
+            ->dateTime('timeout')
+            ->allowEmpty('timeout');
+        
 
         return $validator;
     }
@@ -77,6 +87,7 @@ class UsersTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->isUnique(['username']));
+        $rules->add($rules->isUnique(['email']));
 
         return $rules;
     }
@@ -84,7 +95,7 @@ class UsersTable extends Table
       public function findAuth(\Cake\ORM\Query $query, array $options)
     {
         $query
-            ->select(['id', 'username', 'password', 'role']);
+            ->select(['id', 'username', 'password', 'role', 'state']);
             
         return $query;
     }

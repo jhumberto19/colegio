@@ -37,6 +37,7 @@ class AppController extends Controller
      *
      * @return void
      */
+    
     public function initialize()
     {
         parent::initialize();
@@ -69,7 +70,7 @@ class AppController extends Controller
             ],
             'unauthorizedRedirect' => $this->referer()
         ]);
-
+ $this->Auth->allow(['reset']);
         /*
          * Enable the following components for recommended CakePHP security settings.
          * see http://book.cakephp.org/3.0/en/controllers/components/security.html

@@ -59,15 +59,16 @@ class DocentesTable extends Table
 
         $validator
             ->requirePresence('nombre', 'create')
-            ->notEmpty('nombre');
+            ->notEmpty('nombre','rellene este campo');
+
 
         $validator
             ->requirePresence('apellido', 'create')
-            ->notEmpty('apellido');
+            ->notEmpty('apellido','rellene este campo');
 
         $validator
-            ->requirePresence('dni', 'create')
-            ->notEmpty('dni');
+            ->requirePresence('nip', 'create')
+            ->notEmpty('nip','rellene este campo');
 
         return $validator;
     }

@@ -27,22 +27,24 @@ $cakeDescription = 'ColegioCC';
     <?= $this->Html->meta('icon') ?>
 
 
-    <?= $this->Html->script(['jquery-3.1.1.slim.min','bootstrap.min']) ?>
-    <?= $this->Html->css('bootstrap.min') ?>
-     <?= $this->Html->css('estilo') ?>
-     
-   
+<?= $this->Html->script('https://code.jquery.com/ui/1.12.1/jquery-ui.js') ?> 
+<?= $this->Html->css('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css') ?>
+<?= $this->Html->script('jquery-2.2.4.min'); ?>
+ <?= $this->Html->script('bootstrap.min'); ?>
+    <?= $this->Html->css('bootstrap.min'); ?>
+    
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+           
 </head>
 <body>
     
      <?php if(isset($current_user)): ?>
     <?php echo $this->element("menu"); ?><br>
     <?php endif; ?>
-    <?php debug($current_user); ?>
+    
 
    
     <div class="container-fluid">
@@ -50,6 +52,7 @@ $cakeDescription = 'ColegioCC';
         <?= $this->fetch('content') ?>
     </div>
     <footer>
+<?php echo $this->element("navegacion"); ?>
     </footer>
 </body>
 </html>

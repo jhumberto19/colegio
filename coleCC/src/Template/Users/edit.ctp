@@ -10,12 +10,7 @@
     <fieldset>
         <legend><?php echo __('Crear usuario'); ?></legend>
         
-        
-            <?php echo $this->Form->input('username');?>
-      
-       
-        
-        <?php echo $this->Form->input('password');?>
+        <?php echo $this->Form->input('username');?>
          <?php echo $this->Form->input('email'); ?>
         
             <?php echo $this->Form->input('role', array(
@@ -25,9 +20,8 @@
     <?php   echo $this->Form->input('state', array(
             'options' => array('activo' => 'Activo', 'inactivo' => 'Inactivo')
         )); ?>
-    <?= $this->Form->button('Crear' , array( 'class'=>"btn btn-success")) ?>
+    <?= $this->Form->button('Editar' , array( 'class'=>"btn btn-success")) ?>
         <?= $this->Form->end() ?>
         </fieldset>
 </div>
 </div>
-<br><br><br><br><br><br><br><br>
